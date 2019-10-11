@@ -71,8 +71,9 @@ namespace LINQedList
                 {
                     2340.29, 745.31, 21.76, 34.03, 4786.45, 879.45, 9442.85, 2454.63, 45.65
                 };
-
-            Console.WriteLine($"Sum of purchases: ${purchases.Sum()}");
+            
+            // :f2 is a formatting option 
+            Console.WriteLine($"Sum of purchases: ${purchases.Sum():f2}");
 
             // What is our most expensive product?
             List<double> prices = new List<double>()
@@ -82,7 +83,6 @@ namespace LINQedList
 
             Console.WriteLine($"The highest price is ${prices.Max()}");
             Console.WriteLine();
-
 
             /*
             Store each number in the following List until a perfect square
@@ -129,9 +129,10 @@ namespace LINQedList
             */
 
             List<Customer> millionaires = customers
-                .Where(customer => customer.Balance > 999999)
+                .Where(customer => customer.Balance >= 1000000)
                 .ToList();
-           
+
+            // Returns an anonymous object
             var millionairesByBank = millionaires.GroupBy(
                 customer => customer.Bank,
                 (key, value) => new
@@ -139,6 +140,20 @@ namespace LINQedList
                     BankName = key,
                     MillionaireCount = value.Count()
                 });
+
+            // Another way to do GroupBy (another overload). Adam recommends this way.
+            var report = customers
+                .Where(c => c.Balance >= 1000000)
+                .GroupBy(c => c.Bank)
+                .Select(group =>
+            {
+                return new
+                {
+                    BankName = group.Key,
+                    MillionaireCount = group.Count()
+                };
+            });
+
 
             foreach (var millionaire in millionairesByBank)
             {
@@ -191,9 +206,11 @@ namespace LINQedList
                         BankName = bank.Name
                     }
             ).ToList();
-
-            Console.WriteLine();                        
             
+            millionaireReport.OrderBy(ReportItem => ReportItem.CustomerName.Split(" ").Last());
+
+            Console.WriteLine();
+
             foreach (var item in millionaireReport)
             {
                 Console.WriteLine($"{item.CustomerName} at {item.BankName}");
