@@ -131,13 +131,7 @@ namespace LINQedList
             List<Customer> millionaires = customers
                 .Where(customer => customer.Balance > 999999)
                 .ToList();
-
-            foreach (Customer customer in millionaires)
-            {
-                Console.WriteLine($"{customer.Name} is a customer at {customer.Bank}");
-            }
-            Console.WriteLine();
-
+           
             var millionairesByBank = millionaires.GroupBy(
                 customer => customer.Bank,
                 (key, value) => new
@@ -151,6 +145,59 @@ namespace LINQedList
                 Console.WriteLine($"{millionaire.BankName} customers: {millionaire.MillionaireCount}");
             }
 
+            /* Challenge Exercise: Introduction to Joining Two Related Collections
+            As a light introduction to working with relational databases, this example works with two collections of data - banks and customers - that are related through the Bank attribute on the customer. In that attribute, we store the abbreviation for a bank. However, we want to get the full name of the bank when we produce our output. This is called joining the collections together. */
+
+            /* TASK:
+            As in the previous exercise, you're going to output the millionaires,
+            but you will also display the full name of the bank. You also need
+            to sort the millionaires' names, ascending by their LAST name.
+
+            Example output:
+                Tina Fey at Citibank
+                Joe Landy at Wells Fargo
+                Sarah Ng at First Tennessee
+                Les Paul at Wells Fargo
+                Peg Vale at Bank of America */
+
+            // Create some banks and store in a List
+            List<Bank> banks = new List<Bank>() {
+            new Bank(){ Name="First Tennessee", Symbol="FTB"},
+            new Bank(){ Name="Wells Fargo", Symbol="WF"},
+            new Bank(){ Name="Bank of America", Symbol="BOA"},
+            new Bank(){ Name="Citibank", Symbol="CITI"},
+        };
+
+            /*
+                You will need to use the `Where()`
+                and `Select()` methods to generate
+                instances of the following class.
+
+                public class ReportItem
+                {
+                    public string CustomerName { get; set; }
+                    public string BankName { get; set; }
+                }
+            */
+
+            List<ReportItem> millionaireReport = millionaires.Join(
+                banks,
+                millionaire => millionaire.Bank,
+                bank => bank.Symbol,
+                (millionaire, bank) =>
+                    new ReportItem
+                    {
+                        CustomerName = millionaire.Name,
+                        BankName = bank.Name
+                    }
+            ).ToList();
+
+            Console.WriteLine();                        
+            
+            foreach (var item in millionaireReport)
+            {
+                Console.WriteLine($"{item.CustomerName} at {item.BankName}");
+            }
         }
     }
 }
