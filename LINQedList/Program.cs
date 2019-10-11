@@ -96,14 +96,13 @@ namespace LINQedList
                     66, 12, 8, 27, 82, 34, 7, 50, 19, 46, 81, 23, 30, 4, 68, 14
                 };
 
-            // public static double Sqrt (double d);
-            // IEnumerable<int> noSquareRoots = wheresSquaredo.TakeWhile(number => Math.Sqrt(number));
+            List<int> noSquareRoots = wheresSquaredo.TakeWhile(number => Math.Sqrt(number) % 1 != 0).ToList();
 
-            // foreach (int number in noSquareRoots)
-            // {
-            //     Console.WriteLine(number);
-
-            // }            
+            foreach (int number in noSquareRoots)
+            {
+                Console.WriteLine(number);
+            }
+            Console.WriteLine();
 
             List<Customer> customers = new List<Customer>() {
             new Customer(){ Name="Bob Lesman", Balance=80345.66, Bank="FTB"},
@@ -129,12 +128,6 @@ namespace LINQedList
             CITI 1
             */
 
-            // var results = customers.GroupBy(
-            //     customer => customer.Name,
-            //     customer => customer.Bank,
-            //     (key, g) => new { CustomerName = key, Bank = g.ToList() }
-            // );
-
             List<Customer> millionaires = customers
                 .Where(customer => customer.Balance > 999999)
                 .ToList();
@@ -142,9 +135,9 @@ namespace LINQedList
             foreach (Customer customer in millionaires)
             {
                 Console.WriteLine($"{customer.Name} is a customer at {customer.Bank}");
-                Console.WriteLine();
             }
-            
+            Console.WriteLine();
+
             var millionairesByBank = millionaires.GroupBy(
                 customer => customer.Bank,
                 (key, value) => new
